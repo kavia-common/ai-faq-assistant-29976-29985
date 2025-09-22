@@ -57,6 +57,7 @@ a, button, .btn, .chip, .nav-item, .card {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   border: 1px solid rgba(17, 24, 39, 0.06);
+  background-image: radial-gradient(1200px 300px at 10% -10%, rgba(59,130,246,0.08), transparent);
 }
 
 /* Focus ring */

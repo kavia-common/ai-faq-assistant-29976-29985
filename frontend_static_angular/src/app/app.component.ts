@@ -2,8 +2,14 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+/**
+ * Role of a message in the simulated chat.
+ */
 type Role = 'user' | 'assistant';
 
+/**
+ * Shared properties for a processing step in the RAG/MCP trace.
+ */
 interface StepBase {
   title: string;
   description: string;
@@ -11,6 +17,9 @@ interface StepBase {
   expanded: boolean;
 }
 
+/**
+ * RAG-style processing step details.
+ */
 interface RAGStep extends StepBase {
   type: 'rag';
   details: {
@@ -19,6 +28,9 @@ interface RAGStep extends StepBase {
   };
 }
 
+/**
+ * MCP-style processing step details.
+ */
 interface MCPStep extends StepBase {
   type: 'mcp';
   details: {
@@ -29,18 +41,27 @@ interface MCPStep extends StepBase {
 
 type Step = RAGStep | MCPStep;
 
+/**
+ * Chat message type for the conversation timeline.
+ */
 interface Message {
   role: Role;
   content: string;
   meta?: { type: 'rag' | 'mcp'; summary: string };
 }
 
+/**
+ * Sidebar category type.
+ */
 interface Category {
   name: string;
   icon: string;
   count: number;
 }
 
+/**
+ * Static FAQ item type.
+ */
 interface FAQItem {
   q: string;
   a: string;
@@ -56,17 +77,6 @@ interface FAQItem {
 })
 export class AppComponent {
   /** Ocean Professional themed static AI FAQ Assistant */
-
-  // PUBLIC_INTERFACE
-  /**
-   * Reset the simulated conversation and steps to their initial state.
-   * This is a public method invoked by the header Reset button.
-   */
-  resetConversation(): void {
-    this.messages = [...this.initialMessages];
-    this.steps = this.makeInitialSteps();
-    this.draft = '';
-  }
 
   title = 'AI FAQ Assistant';
   draft = '';
@@ -99,6 +109,10 @@ export class AppComponent {
 
   steps: Step[] = this.makeInitialSteps();
 
+  /**
+   * Create the initial set of RAG/MCP steps for the Processing Trace.
+   * Kept private since it is an internal factory.
+   */
   private makeInitialSteps(): Step[] {
     return [
       {
@@ -151,6 +165,17 @@ export class AppComponent {
         },
       },
     ];
+  }
+
+  // PUBLIC_INTERFACE
+  /**
+   * Reset the simulated conversation and steps to their initial state.
+   * This is a public method invoked by the header Reset button.
+   */
+  resetConversation(): void {
+    this.messages = [...this.initialMessages];
+    this.steps = this.makeInitialSteps();
+    this.draft = '';
   }
 
   // PUBLIC_INTERFACE
@@ -293,6 +318,9 @@ export class AppComponent {
     current.expanded = !current.expanded;
   }
 
+  /**
+   * Example of chips shown near the chat header.
+   */
   flowChips(): string[] {
     return ['RAG', 'MCP', 'Step-by-step'];
   }
