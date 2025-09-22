@@ -81,6 +81,12 @@ export class AppComponent {
   title = 'AI FAQ Assistant';
   draft = '';
 
+  /**
+   * When non-empty, FAQ list is filtered by this search term (case-insensitive, partial match)
+   * across question and answer. When empty, category-only filtering applies.
+   */
+  searchQuery: string = '';
+
   categories: Category[] = [
     { name: 'Getting Started', icon: '🚀', count: 4 },
     { name: 'Pricing', icon: '💳', count: 3 },
@@ -169,22 +175,25 @@ export class AppComponent {
 
   // PUBLIC_INTERFACE
   /**
-   * Reset the simulated conversation and steps to their initial state.
+   * Reset the simulated conversation, steps, and any active search filter.
    * This is a public method invoked by the header Reset button.
    */
   resetConversation(): void {
     this.messages = [...this.initialMessages];
     this.steps = this.makeInitialSteps();
     this.draft = '';
+    this.searchQuery = '';
   }
 
   // PUBLIC_INTERFACE
   /**
    * Select a category for FAQ filtering.
+   * If a search is active, the search continues to apply across all categories.
    * @param index The index of the category in the categories array.
    */
   selectCategory(index: number): void {
     this.activeCategoryIndex = index;
+    // Category change does not clear search; search overrides category if present.
   }
 
   // PUBLIC_INTERFACE
@@ -198,22 +207,49 @@ export class AppComponent {
 
   // PUBLIC_INTERFACE
   /**
-   * Sends a draft message into the static conversation and appends a pre-baked simulated reply.
+   * Sends a draft message and applies FAQ search filtering logic.
+   * - If the draft is empty and Send is clicked: reset search filter (category-only).
+   * - If the draft has text and Send is clicked: apply search filter by that term.
+   * Always appends the message to the simulated chat timeline.
    */
   sendDraft(): void {
     const text = (this.draft || '').trim();
-    if (!text) return;
 
-    this.messages = [
-      ...this.messages,
-      { role: 'user', content: text },
-      {
-        role: 'assistant',
-        meta: { type: 'rag', summary: 'Retrieved context applied' },
-        content:
-          'Here is a simulated answer based on retrieved FAQs. For example, if you asked about pricing, I would cite plan differences and link to the billing policy. (Static demo)',
-      },
-    ];
+    // Apply filtering behavior based on text presence
+    if (text) {
+      // Activate search override with the current draft text
+      this.searchQuery = text;
+    } else {
+      // Reset search if user clicks Send with empty input
+      this.searchQuery = '';
+    }
+
+    // Append to the simulated conversation timeline
+    if (text) {
+      this.messages = [
+        ...this.messages,
+        { role: 'user', content: text },
+        {
+          role: 'assistant',
+          meta: { type: 'rag', summary: 'Retrieved context applied' },
+          content:
+            'Here is a simulated answer based on retrieved FAQs. For example, if you asked about pricing, I would cite plan differences and link to the billing policy. (Static demo)',
+        },
+      ];
+    } else {
+      // Provide a subtle assistant nudge indicating filters cleared
+      this.messages = [
+        ...this.messages,
+        {
+          role: 'assistant',
+          meta: { type: 'mcp', summary: 'Filters reset' },
+          content:
+            'Search cleared. Showing FAQs by the selected category again. You can type a keyword and click Send to filter.',
+        },
+      ];
+    }
+
+    // Clear input field after Send
     this.draft = '';
   }
 
@@ -299,10 +335,20 @@ export class AppComponent {
 
   // PUBLIC_INTERFACE
   /**
-   * Filter FAQs by the active category.
-   * @returns The list of FAQs in the selected category.
+   * Return FAQs filtered either by active search (if set) or by current category.
+   * Search is case-insensitive and matches partial substrings in question or answer.
    */
   filteredFaqs(): FAQItem[] {
+    const query = (this.searchQuery || '').trim().toLowerCase();
+
+    if (query) {
+      return this.faqs.filter((f) => {
+        const q = f.q.toLowerCase();
+        const a = f.a.toLowerCase();
+        return q.includes(query) || a.includes(query);
+      });
+    }
+
     const cat = this.categories[this.activeCategoryIndex]?.name;
     return this.faqs.filter((f) => f.category === cat);
   }

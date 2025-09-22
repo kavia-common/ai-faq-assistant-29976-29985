@@ -171,10 +171,22 @@
       <section class="faq card" aria-label="Frequently Asked Questions">
         <div class="faq-head">
           <h2>FAQs</h2>
-          <p class="muted">Browse curated answers</p>
+          <p class="muted">
+            <!-- Dynamic helper text reflecting filter state -->
+            <ng-container *ngIf="(searchQuery || '').trim().length > 0; else categoryInfo">
+              Showing matches for "<strong>{{ (searchQuery || '').trim() }}</strong>" across all categories
+              <button class="btn btn-ghost" style="margin-left: 8px; padding: 2px 8px; font-size: 12px;"
+                (click)="searchQuery = ''" aria-label="Clear search filter">
+                Clear
+              </button>
+            </ng-container>
+            <ng-template #categoryInfo>
+              Browse curated answers by category: <strong>{{ categories[activeCategoryIndex]?.name }}</strong>
+            </ng-template>
+          </p>
         </div>
 
-        <div class="faq-list">
+        <div class="faq-list" *ngIf="filteredFaqs().length > 0; else emptyState">
           <div
             class="faq-item"
             *ngFor="let f of filteredFaqs(); let i = index"
@@ -196,6 +208,18 @@
             </div>
           </div>
         </div>
+
+        <ng-template #emptyState>
+          <div class="card" style="padding: 12px; margin-top: 8px;">
+            <div class="muted">
+              No FAQs match your search.
+              <ng-container *ngIf="(searchQuery || '').trim().length > 0">
+                Try a different keyword or
+                <button class="btn btn-ghost" style="padding: 2px 8px; font-size: 12px;" (click)="searchQuery = ''">clear the search</button>.
+              </ng-container>
+            </div>
+          </div>
+        </ng-template>
       </section>
     </section>
   </main>
