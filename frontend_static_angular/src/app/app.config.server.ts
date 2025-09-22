@@ -2,6 +2,9 @@ import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
 import { provideServerRendering } from '@angular/platform-server';
 import { appConfig } from './app.config';
 
+/**
+ * Server-side rendering configuration merged with client app config.
+ */
 const serverConfig: ApplicationConfig = {
   providers: [
     provideServerRendering(),

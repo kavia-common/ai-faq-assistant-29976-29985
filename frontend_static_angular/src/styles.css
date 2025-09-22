@@ -1,12 +1,136 @@
-/* Global styles for minimalistic design */
+/* Global styles for modern Ocean Professional theme */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+:root {
+  --color-primary: #2563EB; /* blue-600 */
+  --color-primary-500: #3B82F6; /* blue-500 */
+  --color-secondary: #F59E0B; /* amber-500 */
+  --color-error: #EF4444;
+  --color-bg: #f9fafb; /* gray-50 */
+  --color-surface: #ffffff;
+  --color-text: #111827; /* gray-900 */
+  --color-muted: #6B7280; /* gray-500 */
+  --ring: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 8px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 6px 20px rgba(2, 6, 23, 0.06);
+  --shadow-lg: 0 18px 50px rgba(2, 6, 23, 0.12);
+
+  --gradient-soft: linear-gradient(135deg, rgba(59,130,246,0.10), rgba(243,244,246,1));
+  --gradient-strong: linear-gradient(135deg, rgba(37,99,235,0.12) 0%, rgba(245,158,11,0.12) 100%);
+}
+
 html, body {
   height: 100%;
-  background-color: #ffffff;
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing: 0.1px;
+}
+
+/* Smooth transitions for interactive elements */
+a, button, .btn, .chip, .nav-item, .card {
+  transition: all 220ms ease;
+}
+
+/* Utility classes */
+.container {
+  width: 100%;
+  height: 100%;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+/* Card surface */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+/* Buttons */
+.btn {
+  appearance: none;
+  border: none;
+  border-radius: 9999px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+}
+.btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn-ghost {
+  background: rgba(37, 99, 235, 0.06);
+  color: var(--color-primary);
+  border: 1px solid rgba(37, 99, 235, 0.15);
+}
+
+/* Chips / tags */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  background: rgba(37,99,235,0.06);
+  color: var(--color-primary);
+  border: 1px solid rgba(37, 99, 235, 0.14);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* Scrollbar subtle styling */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(17, 24, 39, 0.12);
+  border-radius: 9999px;
+}
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* Links */
+a { color: var(--color-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Code block */
+.code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  background: #0b1220;
+  color: #E5E7EB;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  overflow: auto;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  font-size: 12px;
+  padding: 4px 8px;
+  background: rgba(245, 158, 11, 0.12);
+  color: #92400E;
+  border: 1px solid rgba(245, 158, 11, 0.24);
 }

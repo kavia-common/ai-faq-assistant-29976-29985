@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'angular' title`, () => {
+  it(`should have the 'AI FAQ Assistant' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('angular');
+    const app = fixture.componentInstance as AppComponent;
+    expect(app.title).toEqual('AI FAQ Assistant');
   });
 
-  it('should render title', () => {
+  it('should render brand title in header', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, angular');
+    expect(compiled.querySelector('.title')?.textContent).toContain('AI FAQ Assistant');
   });
 });

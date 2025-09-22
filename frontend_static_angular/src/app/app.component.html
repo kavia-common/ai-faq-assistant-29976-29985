@@ -1,3 +1,217 @@
-<div class="container">
-  <h1>{{ title }}</h1>
+<div class="app-shell">
+
+  <!-- Header -->
+  <header class="header card" role="banner" aria-label="Header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="logo">
+          <span class="symbol" aria-hidden="true">◎</span>
+        </div>
+        <div class="title-wrap">
+          <h1 class="title">AI FAQ Assistant</h1>
+          <p class="subtitle">RAG & MCP Simulation • Ocean Professional</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="chip">
+          <span class="dot" style="background: var(--color-secondary); width: 8px; height: 8px; border-radius: 50%;"></span>
+          Static Demo
+        </span>
+        <button class="btn btn-ghost" (click)="resetConversation()" aria-label="Reset conversation">Reset</button>
+      </div>
+    </div>
+    <div class="header-gradient" aria-hidden="true"></div>
+  </header>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Sidebar -->
+    <aside class="sidebar card" role="navigation" aria-label="FAQ Categories">
+      <div class="sidebar-head">
+        <h2>Categories</h2>
+        <p class="muted">Explore common topics</p>
+      </div>
+
+      <nav class="nav">
+        <button
+          *ngFor="let c of categories; let i = index"
+          class="nav-item"
+          [class.active]="i === activeCategoryIndex"
+          (click)="selectCategory(i)"
+          [attr.aria-current]="i === activeCategoryIndex ? 'page' : null"
+        >
+          <div class="nav-icon">{{ c.icon }}</div>
+          <div class="nav-text">
+            <div class="nav-title">{{ c.name }}</div>
+            <div class="nav-sub">{{ c.count }} FAQs</div>
+          </div>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="tip card">
+          <div class="tip-head">
+            <span class="tip-badge badge">Tip</span>
+            <span class="tip-title">Simulated AI</span>
+          </div>
+          <p class="tip-body">
+            Interactions are pre-scripted to demonstrate Retrieval-Augmented Generation (RAG) and Multi-step Conversational Processing (MCP) flows.
+          </p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content panels -->
+    <section class="content">
+      <!-- Chatbot Panel -->
+      <section class="chat card" aria-label="Simulated Chatbot">
+        <div class="chat-head">
+          <div class="chat-title-area">
+            <h2>Simulated Chatbot</h2>
+            <div class="flow-chips">
+              <span class="chip">RAG</span>
+              <span class="chip">MCP</span>
+              <span class="chip">Step-by-step</span>
+            </div>
+          </div>
+          <div class="status">
+            <span class="status-dot" [class.online]="true"></span>
+            <span class="status-text">Ready</span>
+          </div>
+        </div>
+
+        <div class="chat-body">
+          <!-- Static conversation timeline -->
+          <div class="timeline">
+            <div *ngFor="let m of messages" class="msg" [class.user]="m.role === 'user'" [class.assistant]="m.role === 'assistant'">
+              <div class="bubble">
+                <div class="bubble-head" *ngIf="m.meta">
+                  <span class="badge" *ngIf="m.meta.type === 'rag'">RAG</span>
+                  <span class="badge" *ngIf="m.meta.type === 'mcp'">MCP</span>
+                  <span class="meta">{{ m.meta.summary }}</span>
+                </div>
+                <div class="bubble-body" [innerHTML]="m.content"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Simulation Steps (static expandable) -->
+          <div class="steps card">
+            <div class="steps-head">
+              <h3>Processing Trace</h3>
+              <p class="muted">How the assistant arrives at answers</p>
+            </div>
+
+            <div class="step" *ngFor="let s of steps; let idx = index">
+              <button class="step-toggle" (click)="toggleStep(idx)" [attr.aria-expanded]="s.expanded">
+                <div class="step-index">{{ idx + 1 }}</div>
+                <div class="step-main">
+                  <div class="step-title">{{ s.title }}</div>
+                  <div class="step-desc muted">{{ s.description }}</div>
+                </div>
+                <div class="step-state">
+                  <span class="badge">{{ s.type.toUpperCase() }}</span>
+                </div>
+              </button>
+              <div class="step-panel" *ngIf="s.expanded">
+                <div class="step-content">
+                  <div *ngIf="s.type === 'rag'">
+                    <div class="section">
+                      <div class="section-title">Synthetic Vector Search</div>
+                      <ul class="bullets">
+                        <li *ngFor="let d of s.details.documents">
+                          <span class="bullet-title">{{ d.title }}</span>
+                          <span class="bullet-meta">score: {{ d.score }}</span>
+                          <div class="bullet-body muted">{{ d.snippet }}</div>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="section">
+                      <div class="section-title">Constructed Context</div>
+                      <pre class="code">{{ s.details.context }}</pre>
+                    </div>
+                  </div>
+                  <div *ngIf="s.type === 'mcp'">
+                    <div class="section">
+                      <div class="section-title">Tool Plan</div>
+                      <ul class="bullets">
+                        <li *ngFor="let t of s.details.tools">
+                          <span class="bullet-title">{{ t.name }}</span>
+                          <span class="bullet-meta">{{ t.purpose }}</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="section">
+                      <div class="section-title">Reasoning Notes</div>
+                      <pre class="code">{{ s.details.reasoning }}</pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Chat input (static behavior) -->
+        <div class="chat-input">
+          <input
+            class="input"
+            type="text"
+            placeholder="Ask about the product, pricing, or troubleshooting (simulated)..."
+            [(ngModel)]="draft"
+            (keyup.enter)="sendDraft()"
+            aria-label="Chat prompt"
+          />
+          <button class="btn" (click)="sendDraft()">Send</button>
+        </div>
+      </section>
+
+      <!-- FAQ Panel -->
+      <section class="faq card" aria-label="Frequently Asked Questions">
+        <div class="faq-head">
+          <h2>FAQs</h2>
+          <p class="muted">Browse curated answers</p>
+        </div>
+
+        <div class="faq-list">
+          <div
+            class="faq-item"
+            *ngFor="let f of filteredFaqs(); let i = index"
+          >
+            <button class="faq-toggle" (click)="toggleFaq(i)" [attr.aria-expanded]="f.expanded">
+              <div class="faq-q">
+                <span class="q-mark">Q</span>
+                <span class="q-text">{{ f.q }}</span>
+              </div>
+              <div class="faq-meta">
+                <span class="chip">{{ f.category }}</span>
+              </div>
+            </button>
+            <div class="faq-a" *ngIf="f.expanded">
+              <div class="a-wrap">
+                <span class="a-mark">A</span>
+                <div class="a-text" [innerHTML]="f.a"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer card" role="contentinfo" aria-label="Footer">
+    <div class="footer-inner">
+      <div class="credits">
+        <span>© 2025 Ocean Professional UI</span>
+        <span class="divider">•</span>
+        <a href="#" aria-label="License">MIT License</a>
+      </div>
+      <div class="badges">
+        <span class="chip">Angular 19</span>
+        <span class="chip">Static Demo</span>
+      </div>
+    </div>
+  </footer>
 </div>
