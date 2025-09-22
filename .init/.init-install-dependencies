@@ -1,0 +1,4 @@
+{
+    "command": "npm install --legacy-peer-deps",
+    "working_directory": "/home/kavia/workspace/code-generation/ai-faq-assistant-29976-29985/frontend_static_angular"
+}
